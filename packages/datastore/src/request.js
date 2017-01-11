@@ -923,21 +923,7 @@ DatastoreRequest.prototype.save = function(entities, callback) {
 
       if (is.array(entityObject.data)) {
         entityProto.properties = entityObject.data.reduce(function(acc, data) {
-          var value = entity.encodeValue(data.value);
-
-          if (is.boolean(data.excludeFromIndexes)) {
-            var excluded = data.excludeFromIndexes;
-            var values = value.arrayValue && value.arrayValue.values;
-
-            if (values) {
-              values = values.map(propAssign('excludeFromIndexes', excluded));
-            } else {
-              value.excludeFromIndexes = data.excludeFromIndexes;
-            }
-          }
-
-          acc[data.name] = value;
-
+          acc[data.name] = entity.encodeValue(data.value, data.excludeFromIndexes);
           return acc;
         }, {});
       } else {

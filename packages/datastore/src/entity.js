@@ -214,6 +214,7 @@ entity.decodeValueProto = decodeValueProto;
  * Convert any native value to a protobuf Value message object.
  *
  * @param {*} value - Native value.
+ * @param {?boolean} exclude - Exclude value from index.
  * @return {object}
  *
  * @example
@@ -222,8 +223,12 @@ entity.decodeValueProto = decodeValueProto;
  * //   stringValue: 'Hi'
  * // }
  */
-function encodeValue(value) {
+function encodeValue(value, exclude) {
   var valueProto = {};
+
+  if (is.boolean(exclude)) {
+    valueProto.excludeFromIndexes = exclude;
+  }
 
   if (is.boolean(value)) {
     valueProto.booleanValue = value;
@@ -281,7 +286,9 @@ function encodeValue(value) {
 
   if (is.array(value)) {
     valueProto.arrayValue = {
-      values: value.map(entity.encodeValue)
+      values: value.map(function(val) {
+        return entity.encodeValue(val, exclude);
+      })
     };
     return valueProto;
   }
@@ -297,7 +304,7 @@ function encodeValue(value) {
 
       for (var prop in value) {
         if (value.hasOwnProperty(prop)) {
-          value[prop] = entity.encodeValue(value[prop]);
+          value[prop] = entity.encodeValue(value[prop], exclude);
         }
       }
     }
