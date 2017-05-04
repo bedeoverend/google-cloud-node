@@ -226,7 +226,7 @@ entity.decodeValueProto = decodeValueProto;
 function encodeValue(value, exclude) {
   var valueProto = {};
 
-  if (is.boolean(exclude)) {
+  if (is.boolean(exclude) && !is.array(value)) {
     valueProto.excludeFromIndexes = exclude;
   }
 
